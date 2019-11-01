@@ -1,0 +1,19 @@
+node {
+    stage('checkout'){
+        git 'https://github.com/Nitheesha93/ecr.git'
+    }
+    stage('permissions'){
+        sh 'sudo chmod 777 /var/run/docker.sock'
+    }
+    stage('building image'){
+        sh label: '', script: 'docker build -t task .'
+    }
+    stage('tag create'){
+        sh 'docker tag task:latest 559241259817.dkr.ecr.us-east-1.amazonaws.com/task:latest'
+    }
+    stage('pushing'){
+        docker.withRegistry('http://559241259817.dkr.ecr.us-east-1.amazonaws.com/task','ecr:us-east-1:aws-ecr'){
+        sh 'docker push 559241259817.dkr.ecr.us-east-1.amazonaws.com/task:latest'   
+    }
+    }
+}    
